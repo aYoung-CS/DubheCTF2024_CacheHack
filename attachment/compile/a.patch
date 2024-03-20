@@ -1,0 +1,20 @@
+@@ -889,17 +889,11 @@
+ static void dispatch_bin_command(conn *c, char *extbuf) {
+     int protocol_error = 0;
+ 
+-    uint8_t extlen = c->binary_header.request.extlen;
+-    uint16_t keylen = c->binary_header.request.keylen;
++    int extlen = c->binary_header.request.extlen;
++    int keylen = c->binary_header.request.keylen;
+     uint32_t bodylen = c->binary_header.request.bodylen;
+     c->thread->cur_sfd = c->sfd; // cuddle sfd for logging.
+ 
+-    if (keylen > bodylen || keylen + extlen > bodylen) {
+-        write_bin_error(c, PROTOCOL_BINARY_RESPONSE_UNKNOWN_COMMAND, NULL, 0);
+-        c->close_after_write = true;
+-        return;
+-    }
+-
+     if (settings.sasl && !authenticated(c)) {
+         write_bin_error(c, PROTOCOL_BINARY_RESPONSE_AUTH_ERROR, NULL, 0);
+         c->close_after_write = true;
